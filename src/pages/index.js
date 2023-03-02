@@ -2,8 +2,50 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
+import React from 'react'
+import { Tweets } from './Tweets'
 
 const inter = Inter({ subsets: ['latin'] })
+
+
+
+// form with an input box and a submit button that POSTS the input to the /api/hello endpoint when submitted
+// and displays the response from the endpoint in the browser.
+function Moo() {
+  const [value, setValue] = React.useState('')
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const res = await fetch('/api/addTweet', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: 'shawnthe1',
+        text: value,
+        time: new Date().toISOString()
+      }),
+    })
+    const result = await res.json()
+    setValue(result.name)
+  }
+
+  return (
+    <div className="container">
+      <Tweets />
+      <form onSubmit={handleSubmit}>
+        {/* multiline textbox bound to the value variable */}
+        <textarea
+          placeholder="Enter your prompt..."
+          onChange={(e) => setValue(e.target.value)}
+          value={value}
+        />
+        <button type="submit">Submit</button>
+      </form>
+      {value && <p>{value}</p>}
+    </div>
+  )
+}
+
 
 export default function Home() {
   return (
@@ -39,25 +81,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-          <div className={styles.thirteen}>
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
-            />
-          </div>
-        </div>
+        <Moo />
 
         <div className={styles.grid}>
           <a
